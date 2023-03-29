@@ -1,0 +1,26 @@
+{
+  "data":{
+    "relationships": {
+     "hosts":{
+        "data":[
+            {
+           "id": "56ce323b-c00b-403d-af2d-658b9714bd29",
+            "type": "host"
+            },
+            {
+           "id": "6c42fe9c-7f1c-4a2e-bebb-6d8d89d45b74",
+            "type": "host"
+            },
+            {
+           "id": "8ea22592-e0b3-49e5-b831-4b3083d41d9d",
+            "type": "host"
+            },
+            {
+           "id": "dec603bd-38c9-4981-a88b-e82781469758",
+            "type": "host"
+            },
+          ]
+      }
+    }
+   }
+ } 

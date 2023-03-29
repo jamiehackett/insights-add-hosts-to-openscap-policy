@@ -1,0 +1,18 @@
+---
+- name: Output the hostname to be added
+  include_tasks: get_ansible_host.yml
+
+- name: Get API token
+  include_tasks: get_api_access_token.yml
+
+- name: Get the list of policies
+  include_tasks: get_openscap_policies.yml
+
+- name: Get a list of hosts registered with Red Hat insights
+  include_tasks: get_host_list.yml
+
+- name: Create a list of hosts to be added to an OpenSCAP policy
+  include_tasks: set_host_list.yml
+
+- name: Add hosts to OpenSCAP policy
+  include_tasks: set_hosts_to_policy.yml

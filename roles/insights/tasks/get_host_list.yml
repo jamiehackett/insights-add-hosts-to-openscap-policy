@@ -1,0 +1,73 @@
+---
+- name: Get a list of UUIDs attached to each registered host in Red Hat Insights.
+  uri:
+    url: "https://cloud.redhat.com/api/inventory/v1/hosts?per_page={{ page_size }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ token }}"
+      Content-Type: "application/vnd.api+json"
+      accept: application/json
+    body_format: form-urlencoded
+    status_code: 200
+    return_content: yes
+    validate_certs: false
+    force_basic_auth: yes
+  register: host_list 
+
+- name: Get Host List - Next Pages
+  uri:
+    url: "https://cloud.redhat.com/api/inventory/v1/hosts?page={{ item }}&per_page={{ page_size }}"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ token }}"
+      Content-Type: "application/json"
+      accept: application/json
+    body_format: form-urlencoded
+    status_code: 200
+    return_content: yes
+    validate_certs: false
+    force_basic_auth: yes
+  register: host_list_paginated
+  when: item != 1
+  loop: "{{ range(2, ((host_list.json.total - 1) // page_size) + 2) | list }}"
+
+- name: Set the list of hosts to a variable.
+  set_fact:
+    host_data: "{{ host_list_paginated }}"
+
+- name: Extract just the fqdn of the each of the hosts
+  set_fact:
+    uuids: '{{ host_data | json_query(get_uuids) }}'
+  vars:
+    get_uuids: "results[].json.results[].{id: id, fqdn:fqdn}"
+
+- name: Print the list of FQDNs for each of the hosts
+  debug:
+    var: uuids
+
+# To be removed, included output for debugging.
+
+#- name: Output the list to a text file for dev purposes
+#  copy:
+#    content: "{{ host_data }}"
+#    dest: host_list.json
+
+#- name: Output the list of UUIDs to a text file for dev purposes
+#  copy:
+#    content: "{{ uuids }}"
+#    dest: uuids.json 
+
+- name: Extract the UUID of the host we want to add
+  set_fact:
+    uuids_added: '{{ uuids | json_query(get_spec) }}'
+  vars:
+    get_spec: "[?fqdn=='{{ host_to_be_added }}'].id"
+
+
+- name: Output variables
+  debug:
+    var: existing_hosts
+
+- name: Output variables
+  debug:
+    var: uuids_added

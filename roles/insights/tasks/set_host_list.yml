@@ -1,0 +1,14 @@
+---
+- name: Set the contents of compliance_host.j2 to UUIDs of the hosts we wish to add to a OpenSCAP policy.
+  template:
+    src=templates/compliance_host.j2
+    dest=compliance_host.json
+    mode=0644
+
+- name: Create json payload for API call
+  set_fact:
+    json_file: "{{ lookup('file', 'compliance_host.json') }}"
+
+- name: Print the json payload
+  debug:
+    var: json_file

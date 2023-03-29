@@ -1,0 +1,22 @@
+{
+  "data":{
+    "relationships": {
+     "hosts":{
+        "data":[
+{% for var in existing_hosts %}
+            {
+           "id": "{{ var }}",
+            "type": "host"
+            },
+{% endfor %}
+{% for var in uuids_added %}
+            {
+           "id": "{{ var }}",
+            "type": "host"
+            },
+{% endfor %}
+          ]
+      }
+    }
+   }
+ } 

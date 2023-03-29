@@ -1,0 +1,53 @@
+---
+- name: Get a list of OpenSCAP policies available in Insights
+  uri:
+    url: https://console.redhat.com/api/compliance/profiles
+    method: GET
+    headers:
+      Authorization: "Bearer {{ token }}"        
+      Content-Type: "application/json"
+      accept: application/json
+    body_format: form-urlencoded
+    status_code: 200
+    return_content: yes
+    validate_certs: false
+    force_basic_auth: yes
+  register: profiles
+  delegate_to: localhost
+
+- name: Set profile list
+  set_fact:
+    profile_list: '{{ profiles.json }}'
+
+- name: Extract profile_id
+  set_fact:
+    profile_id: '{{ profile_list | json_query(get_profile_id) }}'
+  vars:
+    get_profile_id: "data[?attributes.name == '{{ profile_name }}'].id"
+
+- name: Output the profile_id
+  debug:
+    var: profile_id
+
+- name: Get existing hosts that are attached to a policy.
+  set_fact:
+    existing_hosts: '{{ profile_list | json_query(get_existing_hosts) }}'
+  vars:
+    get_existing_hosts: "data[?attributes.name == '{{ profile_name}}'].relationships.hosts.data[].id"
+
+- name: Output existing hosts
+  debug:
+    var: existing_hosts
+
+# To be removed, included output for debugging.     
+
+#- name: Output existing hosts to file
+#  copy:
+#    content: "{{ existing_hosts }}"
+#    dest: existing_hosts.json
+
+
+#- name: Output profile_list to file
+#  copy:
+#    content: "{{ profile_list }}"
+#    dest: profile_list.json

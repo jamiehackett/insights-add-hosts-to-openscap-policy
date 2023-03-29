@@ -1,0 +1,8 @@
+---
+- name: Output the ansible hostname of the hosts to be added to a policy
+  set_fact:
+    host_to_be_added: "{{ ansible_fqdn }}"
+
+- name: Print the name of the host
+  debug:
+    var: host_to_be_added

@@ -1,0 +1,6 @@
+---
+- name: Insights test
+  gather_facts: yes
+  hosts: localhost
+  roles:
+    - insights
